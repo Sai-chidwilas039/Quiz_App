@@ -60,14 +60,23 @@ function selectAnswer(selectedInput, questionIndex) {
 
     selectedAnswers[questionIndex] = selectedAnswer;
 
-    // Highlight correct and incorrect answers immediately
+    // Highlight the correct answer and selected answer immediately
     answerContainer.querySelectorAll('label').forEach(label => {
         const input = label.querySelector('input');
+
+        // If it's the correct answer, highlight in green
         if (input.value === questions[questionIndex].correctAnswer) {
             label.classList.add('correct');
-        } else if (input.value === selectedAnswer) {
+            label.classList.remove('incorrect');
+        } 
+        // If it's the wrong selected answer, highlight in red
+        else if (input.value === selectedAnswer) {
             label.classList.add('incorrect');
-        } else {
+            label.classList.remove('correct');
+        } 
+        // Remove any previous highlights from other options
+        else {
+            label.classList.remove('correct');
             label.classList.remove('incorrect');
         }
     });
