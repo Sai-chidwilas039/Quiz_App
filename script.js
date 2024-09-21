@@ -24,6 +24,9 @@ const questions = [
 const quizContainer = document.getElementById('quiz');
 const resultsContainer = document.getElementById('results');
 
+let score = 0;
+let selectedAnswers = [];
+
 function buildQuiz() {
     const output = [];
 
@@ -51,6 +54,23 @@ function buildQuiz() {
 function selectAnswer(questionIndex, selectedAnswer) {
     const answerContainers = quizContainer.querySelectorAll('.answers')[questionIndex];
     const correctAnswer = questions[questionIndex].correctAnswer;
+    
+    // Check if the question was already answered
+    if (selectedAnswers[questionIndex] === undefined) {
+        selectedAnswers[questionIndex] = selectedAnswer;
+
+        if (selectedAnswer === correctAnswer) {
+            score++;
+        }
+    } else {
+        // If changing the answer, adjust the score accordingly
+        if (selectedAnswers[questionIndex] !== correctAnswer && selectedAnswer === correctAnswer) {
+            score++;
+        } else if (selectedAnswers[questionIndex] === correctAnswer && selectedAnswer !== correctAnswer) {
+            score--;
+        }
+        selectedAnswers[questionIndex] = selectedAnswer;
+    }
 
     answerContainers.querySelectorAll('label').forEach(label => {
         const input = label.querySelector('input');
@@ -66,12 +86,15 @@ function selectAnswer(questionIndex, selectedAnswer) {
                 label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
             }
         }
-        
+
         // Always highlight the correct answer
         if (input.value === correctAnswer) {
             label.style.backgroundColor = '#c8e6c9';
         }
     });
+
+    // Display the score
+    resultsContainer.innerHTML = `Your current score is ${score} out of ${questions.length}`;
 }
 
 buildQuiz();
