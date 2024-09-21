@@ -33,7 +33,7 @@ function buildQuiz() {
         for (let letter in currentQuestion.answers) {
             answers.push(
                 `<label>
-                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(this, ${questionIndex})">
+                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(${questionIndex}, '${letter}')">
                     ${letter}: ${currentQuestion.answers[letter]}
                 </label>`
             );
@@ -48,20 +48,28 @@ function buildQuiz() {
     quizContainer.innerHTML = output.join('');
 }
 
-function selectAnswer(selectedInput, questionIndex) {
+function selectAnswer(questionIndex, selectedAnswer) {
     const answerContainers = quizContainer.querySelectorAll('.answers')[questionIndex];
-    const userAnswer = selectedInput.value;
     const correctAnswer = questions[questionIndex].correctAnswer;
 
-    // Highlight all answers
     answerContainers.querySelectorAll('label').forEach(label => {
         const input = label.querySelector('input');
+
+        // Reset background color
+        label.style.backgroundColor = '';
+
+        // Highlight the selected answer
+        if (input.value === selectedAnswer) {
+            if (selectedAnswer === correctAnswer) {
+                label.style.backgroundColor = '#c8e6c9'; // Correct answer color
+            } else {
+                label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
+            }
+        }
+        
+        // Always highlight the correct answer
         if (input.value === correctAnswer) {
-            label.style.backgroundColor = '#c8e6c9'; // Correct answer color
-        } else if (input.value === userAnswer) {
-            label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
-        } else {
-            label.style.backgroundColor = ''; // Reset for other options
+            label.style.backgroundColor = '#c8e6c9';
         }
     });
 }
