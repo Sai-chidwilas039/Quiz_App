@@ -23,9 +23,7 @@ const questions = [
 
 const quizContainer = document.getElementById('quiz');
 const resultsContainer = document.getElementById('results');
-
-let score = 0;
-let selectedAnswers = [];
+const submitButton = document.getElementById('submit');
 
 function buildQuiz() {
     const output = [];
@@ -36,7 +34,7 @@ function buildQuiz() {
         for (let letter in currentQuestion.answers) {
             answers.push(
                 `<label>
-                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(${questionIndex}, '${letter}')">
+                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(this)">
                     ${letter}: ${currentQuestion.answers[letter]}
                 </label>`
             );
@@ -51,50 +49,38 @@ function buildQuiz() {
     quizContainer.innerHTML = output.join('');
 }
 
-function selectAnswer(questionIndex, selectedAnswer) {
-    const answerContainers = quizContainer.querySelectorAll('.answers')[questionIndex];
-    const correctAnswer = questions[questionIndex].correctAnswer;
-    
-    // Check if the question was already answered
-    if (selectedAnswers[questionIndex] === undefined) {
-        selectedAnswers[questionIndex] = selectedAnswer;
+let selectedAnswers = [];
 
-        if (selectedAnswer === correctAnswer) {
-            score++;
-        }
-    } else {
-        // If changing the answer, adjust the score accordingly
-        if (selectedAnswers[questionIndex] !== correctAnswer && selectedAnswer === correctAnswer) {
-            score++;
-        } else if (selectedAnswers[questionIndex] === correctAnswer && selectedAnswer !== correctAnswer) {
-            score--;
-        }
-        selectedAnswers[questionIndex] = selectedAnswer;
-    }
+function selectAnswer(selectedInput) {
+    const questionIndex = selectedInput.name.replace('question', '');
+    selectedAnswers[questionIndex] = selectedInput.value;
+}
 
-    answerContainers.querySelectorAll('label').forEach(label => {
-        const input = label.querySelector('input');
+function showResults() {
+    const answerContainers = quizContainer.querySelectorAll('.answers');
+    let score = 0;
 
-        // Reset background color
-        label.style.backgroundColor = '';
+    questions.forEach((currentQuestion, questionIndex) => {
+        const answerContainer = answerContainers[questionIndex];
+        const userAnswer = selectedAnswers[questionIndex];
 
-        // Highlight the selected answer
-        if (input.value === selectedAnswer) {
-            if (selectedAnswer === correctAnswer) {
+        answerContainer.querySelectorAll('label').forEach(label => {
+            const input = label.querySelector('input');
+            if (input.value === currentQuestion.correctAnswer) {
                 label.style.backgroundColor = '#c8e6c9'; // Correct answer color
-            } else {
+            } else if (input.value === userAnswer) {
                 label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
             }
-        }
+        });
 
-        // Always highlight the correct answer
-        if (input.value === correctAnswer) {
-            label.style.backgroundColor = '#c8e6c9';
+        if (userAnswer === currentQuestion.correctAnswer) {
+            score++;
         }
     });
 
-    // Display the score
-    resultsContainer.innerHTML = `Your current score is ${score} out of ${questions.length}`;
+    resultsContainer.innerHTML = `You scored ${score} out of ${questions.length}`;
 }
 
 buildQuiz();
+
+submitButton.addEventListener('click', showResults);
