@@ -23,7 +23,6 @@ const questions = [
 
 const quizContainer = document.getElementById('quiz');
 const resultsContainer = document.getElementById('results');
-const submitButton = document.getElementById('submit');
 
 function buildQuiz() {
     const output = [];
@@ -34,7 +33,7 @@ function buildQuiz() {
         for (let letter in currentQuestion.answers) {
             answers.push(
                 `<label>
-                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(this)">
+                    <input type="radio" name="question${questionIndex}" value="${letter}" onclick="selectAnswer(this, ${questionIndex})">
                     ${letter}: ${currentQuestion.answers[letter]}
                 </label>`
             );
@@ -49,38 +48,22 @@ function buildQuiz() {
     quizContainer.innerHTML = output.join('');
 }
 
-let selectedAnswers = [];
+function selectAnswer(selectedInput, questionIndex) {
+    const answerContainers = quizContainer.querySelectorAll('.answers')[questionIndex];
+    const userAnswer = selectedInput.value;
+    const correctAnswer = questions[questionIndex].correctAnswer;
 
-function selectAnswer(selectedInput) {
-    const questionIndex = selectedInput.name.replace('question', '');
-    selectedAnswers[questionIndex] = selectedInput.value;
-}
-
-function showResults() {
-    const answerContainers = quizContainer.querySelectorAll('.answers');
-    let score = 0;
-
-    questions.forEach((currentQuestion, questionIndex) => {
-        const answerContainer = answerContainers[questionIndex];
-        const userAnswer = selectedAnswers[questionIndex];
-
-        answerContainer.querySelectorAll('label').forEach(label => {
-            const input = label.querySelector('input');
-            if (input.value === currentQuestion.correctAnswer) {
-                label.style.backgroundColor = '#c8e6c9'; // Correct answer color
-            } else if (input.value === userAnswer) {
-                label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
-            }
-        });
-
-        if (userAnswer === currentQuestion.correctAnswer) {
-            score++;
+    // Highlight all answers
+    answerContainers.querySelectorAll('label').forEach(label => {
+        const input = label.querySelector('input');
+        if (input.value === correctAnswer) {
+            label.style.backgroundColor = '#c8e6c9'; // Correct answer color
+        } else if (input.value === userAnswer) {
+            label.style.backgroundColor = '#ffcdd2'; // Incorrect answer color
+        } else {
+            label.style.backgroundColor = ''; // Reset for other options
         }
     });
-
-    resultsContainer.innerHTML = `You scored ${score} out of ${questions.length}`;
 }
 
 buildQuiz();
-
-submitButton.addEventListener('click', showResults);
