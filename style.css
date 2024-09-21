@@ -69,7 +69,13 @@ button:hover {
     text-align: center;
 }
 
+.correct {
+    background-color: #c8e6c9; /* Green for correct */
+}
 
+.incorrect {
+    background-color: #ffcdd2; /* Red for incorrect */
+}
 
 
 
