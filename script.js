@@ -27,6 +27,7 @@ const downloadButton = document.getElementById('download-btn');
 
 let currentQuestionIndex = 0;
 let score = 0;
+let selectedAnswers = [];
 
 function startQuiz(){
     currentQuestionIndex = 0;
@@ -70,6 +71,13 @@ function selectAnswer(e){
     }else{
         selectedBtn.classList.add("incorrect");
     }
+
+    selectedAnswers[currentQuestionIndex] = {
+        question: questions[currentQuestionIndex].question,
+        yourAnswer: selectedBtn.innerHTML,
+        correctAnswer: questions[currentQuestionIndex].answers.find(ans => ans.correct).text
+    };
+
     Array.from(answerButtons.children).forEach(button => {
         if(button.dataset.correct === "true"){
             button.classList.add("correct");
@@ -111,10 +119,8 @@ function downloadCSV() {
     const csvRows = [];
     csvRows.push("Question,Your Answer,Correct Answer");
 
-    questions.forEach((q, idx) => {
-        let correctAnswer = q.answers.find(ans => ans.correct).text;
-        let yourAnswer = Array.from(answerButtons.children).find(btn => btn.classList.contains('correct') || btn.classList.contains('incorrect')).innerText;
-        csvRows.push(`"${q.question}","${yourAnswer}","${correctAnswer}"`);
+    selectedAnswers.forEach(answer => {
+        csvRows.push(`"${answer.question}","${answer.yourAnswer}","${answer.correctAnswer}"`);
     });
 
     csvRows.push(`\nTotal Score, ${score}/${questions.length}`);
@@ -132,6 +138,6 @@ function downloadCSV() {
     a.click();
     document.body.removeChild(a);
 }
-document.getElementById('download-btn').addEventListener('click', downloadCSV);
+downloadButton.addEventListener('click', downloadCSV);
 
 startQuiz();
