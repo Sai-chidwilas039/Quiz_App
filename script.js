@@ -1,3 +1,4 @@
+// Your existing code
 const questions = [
     {
         question: "What is the capital of France?",
@@ -30,6 +31,7 @@ function startQuiz(){
     currentQuestionIndex = 0;
     score = 0;
     nextButton.innerHTML = "Next";
+    document.getElementById('download-btn').style.display = "none"; // Hide download button when starting the quiz
     showQuestion();
 }
 
@@ -81,6 +83,7 @@ function showScore(){
     questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
     nextButton.innerHTML = "Play Again";
     nextButton.style.display = "block";
+    document.getElementById('download-btn').style.display = "block"; // Show the download button
 }
 
 function handleNextButton(){
@@ -92,7 +95,7 @@ function handleNextButton(){
     }
 }
 
-nextButton.addEventListener("click", ()=>{
+nextButton.addEventListener("click", ()=> {
     if(currentQuestionIndex < questions.length){
         handleNextButton();
     }else{
@@ -100,5 +103,33 @@ nextButton.addEventListener("click", ()=>{
     }
 });
 
+// CSV download functionality
+function downloadCSV() {
+    const csvRows = [];
+    csvRows.push("Question,Your Answer,Correct Answer");
+
+    questions.forEach((q, idx) => {
+        let correctAnswer = q.answers.find(ans => ans.correct).text;
+        let yourAnswer = Array.from(answerButtons.children).find(btn => btn.classList.contains('correct') || btn.classList.contains('incorrect')).innerText;
+        csvRows.push(`"${q.question}","${yourAnswer}","${correctAnswer}"`);
+    });
+
+    csvRows.push(`\nTotal Score, ${score}/${questions.length}`);
+
+    // Create a blob from the CSV string
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link to download it
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'quiz_results.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+document.getElementById('download-btn').addEventListener('click', downloadCSV);
 
 startQuiz();
