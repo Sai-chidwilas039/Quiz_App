@@ -23,6 +23,7 @@ const questions = [
 const questionElement = document.getElementById('question');
 const answerButtons = document.getElementById('answer-buttons');
 const nextButton = document.getElementById('next-btn');
+const downloadButton = document.getElementById('download-btn');
 
 let currentQuestionIndex = 0;
 let score = 0;
