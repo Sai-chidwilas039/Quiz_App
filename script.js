@@ -84,6 +84,7 @@ function showScore(){
     questionElement.innerHTML = `You scored ${score} out of ${questions.length}!`;
     nextButton.innerHTML = "Play Again";
     nextButton.style.display = "block";
+    console.log("Download button visible");
     document.getElementById('download-btn').style.display = "block"; // Show the download button
 }
 
@@ -106,6 +107,7 @@ nextButton.addEventListener("click", ()=> {
 
 // CSV download functionality
 function downloadCSV() {
+    console.log("CSV download started");
     const csvRows = [];
     csvRows.push("Question,Your Answer,Correct Answer");
 
@@ -130,6 +132,6 @@ function downloadCSV() {
     a.click();
     document.body.removeChild(a);
 }
-downloadButton.addEventListener('click', downloadCSV);
+document.getElementById('download-btn').addEventListener('click', downloadCSV);
 
 startQuiz();
