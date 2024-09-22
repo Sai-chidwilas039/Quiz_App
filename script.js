@@ -62,7 +62,24 @@ function selectAnswer(e){
     const selectedBtn = e.target;
     const isCorrect = selectedBtn.dataset.correct === "true";
     const selectedOption = selectedBtn.innerHTML;
-    localStorage.setItem(`question${currentQuestionIndex}_answer`, selectedOption);
+    const userId = generateUserId(); // Function to generate user ID
+    
+    // Send the selected option and user details to the backend
+    fetch('/api/save-answer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            userId: userId,
+            question: questionElement.innerHTML,
+            selectedAnswer: selectedOption,
+            correct: isCorrect
+        }),
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch(error => console.error('Error:', error));
     if(isCorrect){
         selectedBtn.classList.add("correct");
         score++;
@@ -76,6 +93,11 @@ function selectAnswer(e){
         button.disabled = true;
     });
     nextButton.style.display = "block";
+}
+
+function generateUserId() {
+    // Generate a unique user ID, this can be done in various ways, e.g., using session data or cookies
+    return 'user_' + Math.random().toString(36).substring(7);
 }
 
 function showScore(){
