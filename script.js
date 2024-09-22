@@ -130,7 +130,6 @@ function downloadCSV() {
     a.click();
     document.body.removeChild(a);
 }
-
-document.getElementById('download-btn').addEventListener('click', downloadCSV);
+downloadButton.addEventListener('click', downloadCSV);
 
 startQuiz();
