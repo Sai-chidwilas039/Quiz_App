@@ -61,6 +61,8 @@ function resetState(){
 function selectAnswer(e){
     const selectedBtn = e.target;
     const isCorrect = selectedBtn.dataset.correct === "true";
+    const selectedOption = selectedBtn.innerHTML;
+    localStorage.setItem(`question${currentQuestionIndex}_answer`, selectedOption);
     if(isCorrect){
         selectedBtn.classList.add("correct");
         score++;
